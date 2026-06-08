@@ -528,7 +528,7 @@ async def generate_images_endpoint(
 # ---------------------------------------------------------
 @app.get("/", response_class=HTMLResponse)
 async def serve_index():
-    with open(os.path.join("static", "index.html"), "r", encoding="utf-8") as f:
+    with open("index.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/v1/billing")
