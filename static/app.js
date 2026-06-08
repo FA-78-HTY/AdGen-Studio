@@ -432,6 +432,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initSetupScreen();
   initEditorScreen();
 
+  // 💡 교수님 등 누구나 바로 접속할 수 있도록 로그인 화면 스킵
+  showScreen('screen-setup');
+
   // 초기 히스토리 저장
   saveHistory();
 
