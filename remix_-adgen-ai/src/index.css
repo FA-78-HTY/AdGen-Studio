@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-brand-apricot: #ff7043;
+  --color-brand-linen: #faf9f6;
+  --color-brand-accent: #ff7043;
+  --color-brand-dark: #18181b;
+  --color-brand-bg: #faf9f6;
+  --color-brand-card: #ffffff;
+  --color-brand-border: #e2e8f0;
+
+  --shadow-warm: 0 10px 30px -5px rgba(255, 112, 67, 0.1), 0 8px 10px -6px rgba(255, 112, 67, 0.1);
+  --shadow-bento: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+
+  --radius-bento: 2rem;
+  --radius-inner: 1rem;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-linen text-slate-900 font-sans antialiased;
+  }
+}
+
+.card-warm {
+  @apply bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 transition-all duration-300;
+}
+
+.mood-card {
+  @apply flex flex-col items-center justify-center p-4 rounded-[1.5rem] border border-slate-100 hover:border-brand-apricot hover:bg-brand-apricot/5 transition-all cursor-pointer bg-white;
+}
+
+.mood-card.active {
+  @apply border-brand-apricot bg-brand-apricot/10 text-brand-apricot ring-1 ring-brand-apricot;
+}

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AdGen Studio</title>
+<meta name="description" content="최첨단 비전 모델을 사용하여 브랜드 에셋을 세련된 상업용 이미지로 변환하세요.">
+<link rel="stylesheet" href="/static/app.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<!-- ══ LOADING OVERLAY ══ -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <p id="loading-text">광고 배경 생성 중...</p>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════════
+  SCREEN 1: LOGIN
+════════════════════════════════════ -->
+<div class="screen active" id="screen-login">
+  <div class="navbar">
+    <div class="nav-logo">AdGen Studio</div>
+  </div>
+
+  <div class="login-card mt-16">
+    <h1>Welcome to <span>AdGen</span></h1>
+    <p>AI가 생성하는 전문가 수준의 상업용 이미지.<br>시작하려면 로그인하세요.</p>
+
+    <div class="user-badge" id="user-badge">
+      <img id="user-avatar" src="" alt="Profile">
+      <span id="user-name">User</span>
+    </div>
+
+    <button class="google-btn" id="btn-google-login">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20" height="20">
+      Google 계정으로 계속하기
+    </button>
+
+    <div class="divider">또는</div>
+
+    <button class="btn-start" id="btn-start-guest" style="background:var(--bg3); color:var(--text); border:1px solid var(--border); box-shadow:none;">
+      게스트로 계속하기
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SCREEN 2: SETUP
+════════════════════════════════════ -->
+<div class="screen" id="screen-setup">
+  <div class="navbar">
+    <div class="nav-logo">AdGen Studio</div>
+    <div class="user-badge visible" style="margin:0; padding:6px 12px; background:transparent; border:none; box-shadow:none;">
+      <img id="setup-avatar" src="https://www.gstatic.com/images/branding/product/2x/avatar_square_blue_120dp.png" width="32" height="32" alt="">
+      <span id="setup-username" style="font-size:14px;">Guest</span>
+    </div>
+  </div>
+
+  <div class="setup-container">
+    <div class="hero-section">
+      <h1>AdGen <span>Studio</span></h1>
+      <p>한 번의 클릭으로 완성되는 광고</p>
+    </div>
+
+    <div class="bento-grid">
+      <!-- Left Column -->
+      <div style="display: flex; flex-direction: column; gap: 40px;">
+        
+        <!-- Source Assets -->
+        <div class="card-warm">
+          <h2 class="card-title"><span class="icon">📁</span> 원본 에셋</h2>
+          <div class="form-group">
+            <label>가게 이름 (브랜드)</label>
+            <input type="text" id="s-brand" placeholder="예: 애드젠 커피">
+          </div>
+          <div class="form-group">
+            <label>가게 주소 (홍보 필수 정보)</label>
+            <input type="text" id="s-address" placeholder="예: 서울시 강남구 테헤란로 123">
+          </div>
+          <div class="form-group">
+            <label>주요 홍보 문구</label>
+            <input type="text" id="s-promo" placeholder="예: 봄맞이 아메리카노 1+1 행사!">
+          </div>
+          <div class="form-group">
+            <label>비즈니스 카테고리</label>
+            <select id="s-category">
+              <option value="cafe">카페 & 베이커리</option>
+              <option value="restaurant">레스토랑 & 다이닝</option>
+              <option value="beauty">뷰티 & 코스메틱</option>
+              <option value="fashion">패션 & 의류</option>
+              <option value="fitness">피트니스 & 헬스</option>
+              <option value="pet">반려동물 케어</option>
+              <option value="education">교육</option>
+              <option value="medical">의료 & 병원</option>
+              <option value="food_delivery">음식 배달</option>
+              <option value="general">일반 비즈니스</option>
+            </select>
+          </div>
+          
+          <div class="photo-upload-area" id="photo-drop-zone">
+            <div class="icon-bg">📸</div>
+            <p class="main">제품 이미지를 드래그 앤 드롭하세요</p>
+            <p class="sub">JPG, PNG 지원 · 다중 파일 업로드 가능</p>
+            <input type="file" id="photo-input" accept="image/*" multiple style="display:none">
+          </div>
+          <div class="photo-previews" id="photo-previews"></div>
+        </div>
+
+        <!-- Aesthetic & Mood -->
+        <div class="card-warm">
+          <h2 class="card-title"><span class="icon">🎨</span> 분위기 & 무드</h2>
+          <p style="color:var(--text2); margin-bottom:24px; font-size:15px;">AI의 디자인 방향을 결정할 기본 무드를 선택하거나 상세한 설명을 입력하세요.</p>
+          
+          <div class="mood-grid">
+            <div class="mood-card" data-mood="luxury">
+              <div class="emoji">💎</div><div class="name">프리미엄</div><div class="desc">어둡고 고급스러움</div>
+            </div>
+            <div class="mood-card" data-mood="warm">
+              <div class="emoji">☕</div><div class="name">아늑함</div><div class="desc">따뜻하고 포근함</div>
+            </div>
+            <div class="mood-card" data-mood="bold">
+              <div class="emoji">⚡</div><div class="name">역동적</div><div class="desc">강렬한 대비</div>
+            </div>
+            <div class="mood-card" data-mood="nature">
+              <div class="emoji">🌿</div><div class="name">미니멀</div><div class="desc">깔끔하고 산뜻함</div>
+            </div>
+            <div class="mood-card" data-mood="fun">
+              <div class="emoji">🎉</div><div class="name">발랄함</div><div class="desc">다채롭고 즐거움</div>
+            </div>
+            <div class="mood-card" data-mood="clean">
+              <div class="emoji">🪞</div><div class="name">모던</div><div class="desc">현대적인 화이트 톤</div>
+            </div>
+          </div>
+
+          <!-- 화풍 선택 -->
+          <h3 style="font-size:16px; font-weight:600; color:var(--text1); margin:28px 0 12px;">🖌️ 일러스트 화풍</h3>
+          <p style="color:var(--text2); font-size:13px; margin-bottom:16px;">생성될 광고의 그림 스타일을 선택하세요.</p>
+          <div class="mood-grid style-grid">
+            <div class="mood-card style-card" data-style="watercolor">
+              <div class="emoji">🎨</div><div class="name">수채화</div><div class="desc">따뜻한 손그림 감성</div>
+            </div>
+            <div class="mood-card style-card" data-style="artdeco">
+              <div class="emoji">✒️</div><div class="name">아르데코</div><div class="desc">고급 잉크 선화</div>
+            </div>
+            <div class="mood-card style-card" data-style="popart">
+              <div class="emoji">🎯</div><div class="name">팝아트</div><div class="desc">굵은 선 강렬한 채색</div>
+            </div>
+            <div class="mood-card style-card" data-style="kawaii">
+              <div class="emoji">🌈</div><div class="name">파스텔</div><div class="desc">아기자기 파스텔</div>
+            </div>
+            <div class="mood-card style-card" data-style="lineart">
+              <div class="emoji">⬜</div><div class="name">라인 아트</div><div class="desc">미니멀 선화</div>
+            </div>
+            <div class="mood-card style-card" data-style="botanical">
+              <div class="emoji">🌿</div><div class="name">보태니컬</div><div class="desc">식물 손그림</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin:0;">
+            <label>추가 세부사항 (선택사항)</label>
+            <textarea id="s-desc" placeholder="광고의 이상적인 배경, 조명, 구도 등을 설명해 주세요..."></textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column -->
+      <div style="position: sticky; top: 120px; display: flex; flex-direction: column; gap: 40px;">
+        
+        <!-- Model Status -->
+        <div class="card-warm border-transparent hover:border-brand-apricot/20">
+          <h2 class="card-title"><span class="icon">⚡</span> 모델 상태</h2>
+          
+          <div class="status-item">
+            <div class="status-label">📁 불러온 에셋</div>
+            <div class="status-value" id="status-assets">0 개 파일</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">🎨 선택</div>
+            <div class="status-value highlight" id="status-mood">선택 안 됨</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">⏱ 예상 소요 시간</div>
+            <div class="status-value">약 10초</div>
+          </div>
+
+          <button class="btn-generate-bg" id="btn-generate-bg">
+            <span style="font-size:20px">✨</span> 생성
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SCREEN 3: EDITOR
+════════════════════════════════════ -->
+<div class="screen" id="screen-editor">
+  <!-- Top Bar -->
+  <div class="editor-topbar">
+    <div class="editor-top-left">
+      <span class="nav-logo" style="margin-right:24px;">AdGen Studio</span>
+      <button class="topbar-btn" id="btn-back-setup">← 뒤로</button>
+      <div style="width:1px; height:24px; background:var(--border); margin:0 8px;"></div>
+      <button class="topbar-btn" id="btn-undo">↩ 실행 취소</button>
+      <button class="topbar-btn" id="btn-redo">↪ 다시 실행</button>
+    </div>
+    
+    <div class="editor-top-right">
+      <button class="topbar-btn" id="btn-regen-top">🔄 배경 재생성</button>
+      <button class="btn-export" id="btn-export">⬇ PNG 다운로드</button>
+    </div>
+  </div>
+
+  <div class="editor-body">
+    <!-- Left Panel -->
+    <div class="side-panel left">
+      <div class="panel-tabs">
+        <button class="panel-tab active" data-tab="tools">도구</button>
+        <button class="panel-tab" data-tab="photos">에셋</button>
+        <button class="panel-tab" data-tab="stickers">스티커</button>
+        <button class="panel-tab" data-tab="layers">레이어</button>
+      </div>
+
+      <!-- Tools Tab -->
+      <div class="panel-content" id="tab-tools">
+        <div class="tool-section-title">타이포그래피</div>
+        <button class="tool-btn" id="btn-add-text-heading"><span class="icon">T</span> 제목 추가</button>
+        <button class="tool-btn" id="btn-add-text-body"><span class="icon" style="font-size:14px">t</span> 본문 텍스트 추가</button>
+        
+        <div class="tool-section-title" style="margin-top:24px">도형</div>
+        <button class="tool-btn" id="btn-add-rect"><span class="icon">▬</span> 사각형</button>
+        <button class="tool-btn" id="btn-add-circle"><span class="icon">⬤</span> 원형</button>
+        <button class="tool-btn" id="btn-add-line"><span class="icon">—</span> 선</button>
+      </div>
+
+      <!-- Photos Tab -->
+      <div class="panel-content" id="tab-photos" style="display:none">
+        <div class="tool-section-title">업로드된 에셋</div>
+        <div id="panel-photo-list"></div>
+        <button class="tool-btn" id="btn-upload-more" style="margin-top:16px; justify-content:center;">
+          ➕ 추가 업로드
+        </button>
+        <input type="file" id="more-photo-input" accept="image/*" multiple style="display:none">
+      </div>
+
+      <!-- Stickers Tab -->
+      <div class="panel-content" id="tab-stickers" style="display:none">
+        <div class="tool-section-title">스티커</div>
+        <div class="sticker-grid" id="sticker-grid"></div>
+      </div>
+
+      <!-- Layers Tab -->
+      <div class="panel-content" id="tab-layers" style="display:none">
+        <div class="tool-section-title">레이어 순서 (위에서 아래로)</div>
+        <div id="layer-list"></div>
+      </div>
+    </div>
+
+    <!-- Canvas Area -->
+    <div class="canvas-area" id="canvas-area">
+      <div class="canvas-wrapper" id="canvas-wrapper">
+        <canvas id="main-canvas" width="630" height="900"></canvas>
+      </div>
+      <div class="zoom-controls">
+        <button class="zoom-btn" id="btn-zoom-out">−</button>
+        <span class="zoom-level" id="zoom-label">100%</span>
+        <button class="zoom-btn" id="btn-zoom-in">+</button>
+        <button class="zoom-btn" id="btn-zoom-fit" title="화면에 맞추기">⊡</button>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="side-panel right">
+      <div class="props-header">
+        <h3 id="props-title">속성</h3>
+      </div>
+      <div class="props-body" id="props-body">
+        <p style="font-size:14px;color:var(--text2);text-align:center;padding-top:40px">
+          레이어를 선택하여<br>속성을 편집하세요
+        </p>
+      </div>
+      <div style="padding: 20px; border-top: 1px solid var(--border); background: var(--bg3);">
+        <button class="tool-btn" id="btn-regen-side" style="margin:0; justify-content:center;">🔄 배경 재생성</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/app-state.js"></script>
+<script src="/static/app-canvas.js"></script>
+<script src="/static/app-editor.js"></script>
+<script src="/static/app-panels.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

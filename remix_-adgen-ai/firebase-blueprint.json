@@ -1,0 +1,57 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "User profile information.",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email"]
+    },
+    "assets": {
+      "title": "Asset",
+      "description": "Uploaded brand assets.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "url": { "type": "string" },
+        "fileName": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "url", "fileName"]
+    },
+    "generations": {
+      "title": "Generation",
+      "description": "AI-generated brand assets.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "prompt": { "type": "string" },
+        "mood": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "completed", "failed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "prompt", "status"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "users",
+      "description": "Public user profile."
+    },
+    "users/{userId}/assets/{assetId}": {
+      "schema": "assets",
+      "description": "User's uploaded brand assets."
+    },
+    "users/{userId}/generations/{generationId}": {
+      "schema": "generations",
+      "description": "User's generated ad assets."
+    }
+  }
+}

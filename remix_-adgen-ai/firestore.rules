@@ -1,0 +1,79 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    // --- Validation Blueprints ---
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['email']) &&
+             data.email is string && data.email.size() <= 100;
+    }
+
+    function isValidAsset(data) {
+      return data.keys().hasAll(['userId', 'url', 'fileName']) &&
+             data.userId == request.auth.uid &&
+             data.url is string && data.url.size() <= 2048 &&
+             data.fileName is string && data.fileName.size() <= 256;
+    }
+
+    function isValidGeneration(data) {
+      return data.keys().hasAll(['userId', 'prompt', 'status']) &&
+             data.userId == request.auth.uid &&
+             data.prompt is string && data.prompt.size() <= 2000 &&
+             data.status in ['pending', 'completed', 'failed'];
+    }
+
+    // --- Collections ---
+
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming()) &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'updatedAt']);
+    }
+
+    match /users/{userId}/assets/{assetId} {
+      allow read, delete: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidAsset(incoming());
+      allow update: if false; // Assets are immutable for now
+    }
+
+    match /users/{userId}/generations/{generationId} {
+      allow read, delete: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidGeneration(incoming());
+      allow update: if isOwner(userId) && isValidGeneration(incoming()) &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['status', 'imageUrl', 'updatedAt']);
+    }
+  }
+}

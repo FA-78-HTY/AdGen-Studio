@@ -1,0 +1,9 @@
+{
+  "name": "Remix: AdGen AI",
+  "description": "Sophisticated AI model generator for premium brand identities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "AI Image Generation",
+    "Brand Asset Management"
+  ]
+}
